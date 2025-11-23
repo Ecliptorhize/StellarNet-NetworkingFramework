@@ -6,9 +6,6 @@ local function validateParams(definition, payload)
     if type(payload) ~= "table" then
         return false, "Payload not table"
     end
-    if #payload < #definition.Params then
-        return false, "Missing parameters"
-    end
     for idx, param in ipairs(definition.Params) do
         local value = payload[idx]
         if value == nil and not param.Optional then
