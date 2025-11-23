@@ -13,6 +13,7 @@ local function buildPublicDefinitions(definitions)
             Params = def.Params,
             Description = def.Description,
             Permission = def.Permission,
+            RateLimit = def.RateLimit,
         }
     end
     return public

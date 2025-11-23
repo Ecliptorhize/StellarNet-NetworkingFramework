@@ -8,7 +8,8 @@ StellarNet is a production-ready, type-safe Roblox networking framework designed
 - **Middleware Pipeline** (Auth → Permission → Rate Limit → Schema → Sanitization → Handler)
 - **Permission Tiers** (User, Mod, Admin, System) with middleware guard
 - **Exploit Detection Logging** for schema, rate-limit, permission, and tampering events
-- **Metrics Tracking** (RTT, events/sec, errors, rejected payloads)
+- **Metrics Tracking** (RTT, events/sec, errors, rejected payloads, last caller context)
+- **Per-Remote Rate Limits** configurable via definitions or runtime overrides
 - **Encrypted Payloads** using server-only secret key and XOR stream fallback
 - **Debugging Dashboards** (server console commands, in-game client overlay)
 - **Clean Module Architecture** with shared utilities and examples
@@ -43,6 +44,7 @@ return {
         Name = "PlayerMove",
         Description = "Broadcasts movement",
         Permission = PermissionLevels.USER,
+        RateLimit = {Limit = 30, Window = 60},
         Params = {
             {Name = "Direction", Type = "Vector3"},
             {Name = "Speed", Type = "number"},
@@ -53,6 +55,8 @@ return {
     },
 }
 ```
+
+- `RateLimit` is optional and accepts `{Limit = number, Window = number}` to override the default token bucket for that remote.
 
 ## Middleware
 Middleware functions follow `(context, next) -> (bool, string?)`. Register additional middleware in `src/Server/init.server.lua` using `pipeline:Register(fn)`. The default chain:
@@ -70,7 +74,9 @@ Middleware functions follow `(context, next) -> (bool, string?)`. Register addit
 
 ## Debugging & Metrics
 - **Server Console**: chat commands `/stellarnet stats`, `/stellarnet remotes`, `/stellarnet violations` (Mod+ permission required).
+- **Server Console Rate Limits**: `/stellarnet limits` shows the default bucket and per-remote overrides.
 - **Client Debugger**: on-screen overlay showing received events and RTT traces.
+- Metrics snapshots include last caller, peak payload size, and the most recent reject/error reasons for each remote.
 - Metrics recorded per-remote: count, avg payload size, avg RTT, errors, rejects. Access via `MetricsService.GetAll()`.
 
 ## Examples
