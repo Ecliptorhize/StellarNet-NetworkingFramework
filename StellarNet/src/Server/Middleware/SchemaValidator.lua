@@ -1,7 +1,6 @@
 -- Validates payloads against remote schemas
 local ExploitLogger = require(script.Parent.Parent.Logger.ExploitLogger)
 local RemoteTypes = require(script.Parent.Parent.Remotes.RemoteTypes)
-local MetricsService = require(script.Parent.Parent.Metrics.MetricsService)
 
 local function validateParams(definition, payload)
     if type(payload) ~= "table" then
@@ -29,13 +28,11 @@ local function SchemaValidator(context, nextFn)
     local def = require(script.Parent.Parent.Remotes.EventDefinitions)[context.RemoteName]
     if not def then
         ExploitLogger.Log(context.Player, context.RemoteName, context.Payload, "Unknown remote")
-        MetricsService.LogReject(context.RemoteName)
         return false, "Unknown remote"
     end
     local ok, reason = validateParams(def, context.Payload)
     if not ok then
         ExploitLogger.Log(context.Player, context.RemoteName, context.Payload, "Schema violation: " .. tostring(reason))
-        MetricsService.LogReject(context.RemoteName)
         return false, reason
     end
     return nextFn()

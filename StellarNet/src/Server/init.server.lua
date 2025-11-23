@@ -19,6 +19,7 @@ local RemoteBinder = require(script.Remotes.RemoteBinder)
 local EventDefinitions = require(script.Remotes.EventDefinitions)
 local MetricsService = require(script.Metrics.MetricsService)
 local ServerConsole = require(script.Logger.ServerConsole)
+local ExploitLogger = require(script.Logger.ExploitLogger)
 
 -- Initialize encryption key (server-only)
 local key = HttpService:GenerateGUID(false)
@@ -40,8 +41,8 @@ for name, remote in pairs(remotes) do
     remote.OnServerEvent:Connect(function(player, payload)
         local decrypted, err = EncryptionUtils.Decrypt(payload)
         if not decrypted then
-            require(script.Logger.ExploitLogger).Log(player, name, payload, "Decryption failed: " .. tostring(err))
-            MetricsService.LogReject(name)
+            ExploitLogger.Log(player, name, payload, "Decryption failed: " .. tostring(err))
+            MetricsService.LogReject(name, "Decryption failed")
             return
         end
 
@@ -55,15 +56,20 @@ for name, remote in pairs(remotes) do
 
         local ok, reason = pipeline:Execute(context)
         if ok then
-            MetricsService.IncrementEvent(name, decrypted)
+            MetricsService.IncrementEvent(name, decrypted, player)
             local handler = EventDefinitions[name].Handler
             local start = tick()
-            handler(player, unpack(decrypted))
+            local success, handlerErr = xpcall(handler, debug.traceback, player, unpack(decrypted))
             local duration = tick() - start
             MetricsService.TrackRTT(name, duration)
+
+            if not success then
+                MetricsService.LogError(name, handlerErr)
+                ExploitLogger.Log(player, name, decrypted, "Handler error: " .. tostring(handlerErr))
+            end
         else
-            MetricsService.LogReject(name)
-            require(script.Logger.ExploitLogger).Log(player, name, decrypted, reason or "Rejected")
+            MetricsService.LogReject(name, reason)
+            ExploitLogger.Log(player, name, decrypted, reason or "Rejected")
         end
     end)
 end

@@ -12,16 +12,16 @@ local function getStats(remoteName)
     return stats
 end
 
-function MetricsService.IncrementEvent(remoteName, payload)
-    getStats(remoteName):Increment(payload)
+function MetricsService.IncrementEvent(remoteName, payload, player)
+    getStats(remoteName):Increment(payload, player)
 end
 
-function MetricsService.LogError(remoteName)
-    getStats(remoteName):LogError()
+function MetricsService.LogError(remoteName, reason)
+    getStats(remoteName):LogError(reason)
 end
 
-function MetricsService.LogReject(remoteName)
-    getStats(remoteName):LogReject()
+function MetricsService.LogReject(remoteName, reason)
+    getStats(remoteName):LogReject(reason)
 end
 
 function MetricsService.TrackRTT(remoteName, duration)
@@ -30,6 +30,14 @@ end
 
 function MetricsService.GetAll()
     return MetricsService.Stats
+end
+
+function MetricsService.GetSnapshot()
+    local snapshot = {}
+    for name, stats in pairs(MetricsService.Stats) do
+        snapshot[name] = stats:GetSnapshot()
+    end
+    return snapshot
 end
 
 return MetricsService

@@ -19,6 +19,7 @@ local EventDefinitions = {
         Name = "ChatMessage",
         Description = "Sends a chat message through middleware stack",
         Permission = PermissionLevels.USER,
+        RateLimit = {Limit = 30, Window = 60},
         Params = {
             {Name = "Message", Type = "string"},
         },
@@ -31,6 +32,7 @@ local EventDefinitions = {
         Name = "SystemBroadcast",
         Description = "High-privilege system wide broadcast",
         Permission = PermissionLevels.ADMIN,
+        RateLimit = {Limit = 6, Window = 60},
         Params = {
             {Name = "Content", Type = "string"},
         },
