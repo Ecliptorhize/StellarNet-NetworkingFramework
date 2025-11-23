@@ -12,6 +12,7 @@ StellarNet is a production-ready, type-safe Roblox networking framework designed
 - **Encrypted Payloads** using server-only secret key and XOR stream fallback
 - **Debugging Dashboards** (server console commands, in-game client overlay)
 - **Clean Module Architecture** with shared utilities and examples
+  
 
 ## Architecture
 ```
