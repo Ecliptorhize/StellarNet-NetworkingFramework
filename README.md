@@ -10,6 +10,7 @@ StellarNet is a production-ready, type-safe Roblox networking framework designed
 - **Exploit Detection Logging** for schema, rate-limit, permission, and tampering events
 - **Metrics Tracking** (RTT, events/sec, errors, rejected payloads, last caller context)
 - **Per-Remote Rate Limits** configurable via definitions or runtime overrides
+- **Global Abuse Controls** with optional player-wide cap, bypass list, and cooldown after repeated hits
 - **Encrypted Payloads** using server-only secret key and XOR stream fallback
 - **Debugging Dashboards** (server console commands, in-game client overlay)
 - **Clean Module Architecture** with shared utilities and examples
@@ -78,6 +79,7 @@ Middleware functions follow `(context, next) -> (bool, string?)`. Register addit
 - **Client Debugger**: on-screen overlay showing received events and RTT traces.
 - Metrics snapshots include last caller, peak payload size, and the most recent reject/error reasons for each remote.
 - Metrics recorded per-remote: count, avg payload size, avg RTT, errors, rejects. Access via `MetricsService.GetAll()`.
+- Rate limit console output now includes global caps, cooldown policy, and bypassed userIds for quick auditing.
 
 ## Examples
 - Server example: `example/ServerExample.lua`

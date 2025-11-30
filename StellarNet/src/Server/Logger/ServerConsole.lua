@@ -44,6 +44,18 @@ local function printLimits()
     for remoteName, data in pairs(limits.Overrides) do
         print(string.format("[StellarNet] %s override: %d calls / %ds", remoteName, data.Limit, data.Window))
     end
+    if limits.Global then
+        print(string.format("[StellarNet] Global player cap: %d calls / %ds", limits.Global.Limit, limits.Global.Window))
+    else
+        print("[StellarNet] Global player cap: disabled")
+    end
+    if limits.Cooldown then
+        print(string.format("[StellarNet] Cooldown after %d violations: %ds block", limits.Cooldown.Threshold, limits.Cooldown.Duration))
+    end
+    if #limits.BypassUserIds > 0 then
+        table.sort(limits.BypassUserIds)
+        print(string.format("[StellarNet] Bypass list: %s", table.concat(limits.BypassUserIds, ", ")))
+    end
 end
 
 local function printViolations()
