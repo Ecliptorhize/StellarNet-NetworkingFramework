@@ -1,0 +1,31 @@
+{
+  "name": "stellarnet-networking",
+  "version": "0.1.0",
+  "description": "StellarNet Roblox networking framework packaged for npm and CI/docker distribution.",
+  "main": "StellarNet/src/init.lua",
+  "bin": {
+    "stellarnet": "bin/stellarnet.js"
+  },
+  "files": [
+    "StellarNet/",
+    "bin/stellarnet.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "pack:local": "npm pack",
+    "copy": "node bin/stellarnet.js --out ./StellarNet --skip-if-present",
+    "postinstall": "node bin/stellarnet.js --skip-if-present"
+  },
+  "keywords": [
+    "roblox",
+    "networking",
+    "middleware",
+    "lua",
+    "stellarnet"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT"
+}

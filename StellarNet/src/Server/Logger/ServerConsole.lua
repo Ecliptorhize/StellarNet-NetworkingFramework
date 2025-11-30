@@ -5,6 +5,7 @@ local ExploitLogger = require(script.ExploitLogger)
 local PermissionService = require(script.Parent.Parent.Permissions.PermissionService)
 local PermissionLevels = require(script.Parent.Parent.Permissions.PermissionLevels)
 local RateLimitMiddleware = require(script.Parent.Parent.Middleware.RateLimitMiddleware)
+local AIMiddleware = require(script.Parent.Parent.Middleware.AIMiddleware)
 
 local ServerConsole = {}
 
@@ -64,6 +65,14 @@ local function printViolations()
     end
 end
 
+local function printAI()
+    local state = AIMiddleware.GetState()
+    print(string.format("[StellarNet][AI] Enabled=%s BlockOnAnomaly=%s", tostring(state.Enabled), tostring(state.BlockOnAnomaly)))
+    for key, record in pairs(state.Detector) do
+        print(string.format("[AI] %s mean=%.4fs var=%.6f samples=%d score=%.2f", key, record.mean, record.variance, record.samples, record.score))
+    end
+end
+
 function ServerConsole.Register()
     Players.PlayerChatted:Connect(function(player, message)
         if not PermissionService.HasPermission(player, PermissionLevels.MOD) then
@@ -75,6 +84,8 @@ function ServerConsole.Register()
             printRemotes()
         elseif message == "/stellarnet limits" then
             printLimits()
+        elseif message == "/stellarnet ai" then
+            printAI()
         elseif message == "/stellarnet violations" then
             printViolations()
         end
